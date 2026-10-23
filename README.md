@@ -5,15 +5,14 @@ A web app that reads a news headline, paragraph or full article and classifies i
 > Large training datasets in `data/` are stored with Git LFS. Install Git LFS before cloning so those files are downloaded.
 > 
 ## Features
-
 - REAL / FAKE verdict with a score bar showing the percentage for each class
 - "Why" lists showing the words that pushed the decision toward REAL or FAKE
 - Text input by typing, pasting, or uploading/pasting a screenshot (read in the browser with OCR)
 - Every prediction is saved to `data/predictions_log.csv`
 - Yes / No feedback buttons save human-verified labels to `data/feedback.csv`, which are added to the training data the next time the model is retrained
+- With the retrained model with the new accuracy, the Model generates better result on next real data
 
 ## How it works
-
 1. **Preprocessing:** lowercase, remove links, punctuation, numbers and stopwords, and strip wire-service tags such as `(Reuters)` and `(AP)`.
 2. **Feature extraction:** TF-IDF over single words and two-word phrases, with the vocabulary capped at 60,000 terms.
 3. **Classification:** a Passive-Aggressive classifier and a Logistic Regression model are both trained, and the one with higher test accuracy is kept.
@@ -87,6 +86,5 @@ STOP-PRESS-Fake-News-Detection-/
 - **Deployment:** containerise with Docker and host the demo publicly.
 
 ## References
-
 - Verma, P. K., Agrawal, P., Amorim, I., and Prodan, R. (2021). WELFake: Word Embedding Over Linguistic Features for Fake News Detection. *IEEE Transactions on Computational Social Systems*, 8(4), 881-893.
 - Pedregosa, F. et al. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research*, 12, 2825-2830.
