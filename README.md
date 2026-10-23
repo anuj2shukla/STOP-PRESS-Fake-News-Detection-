@@ -84,8 +84,6 @@ STOP-PRESS-Fake-News-Detection-/
 - **Cross-source validation:** hold out entire publishers for testing so the test measures generalisation across writing styles, not just memorised style.
 - **Fresh hand-labelled test set:** track accuracy on new, human-checked examples as the main metric.
 - **More human feedback:** collect many verified examples through the Yes / No buttons and retrain.
-- **Transformer model:** fine-tune DistilBERT and compare it with the TF-IDF baseline.
-- **Explainability:** add LIME or SHAP.
 - **Deployment:** containerise with Docker and host the demo publicly.
 
 ## References
