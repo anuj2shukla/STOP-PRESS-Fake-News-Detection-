@@ -1,4 +1,4 @@
-# STOP PRESS - Fake News Detection
+# STOP-PRESS-Fake-News-Detection-
 
 Large training datasets in `data/` are stored with Git LFS. Install Git LFS before cloning so those files are downloaded.
 
