@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stop Press — AI Fake News Detection</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+<style>
+  .project-intro {
+    margin: 0 0 18px;
+    padding: 16px 18px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+  }
+
+  .project-intro p {
+    margin: 5px 0 0;
+    color: #687184;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+
+  .input-meta {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 2px 12px;
+    color: #7b8494;
+    font: 12px "Times New Roman", Times, serif;
+  }
+
+  .section-panel {
+    margin-top: 18px;
+  }
+
+  .section-panel .panel-title {
+    margin-bottom: 14px;
+  }
+
+  .workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .workflow-step {
+    padding: 14px 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    text-align: center;
+    font: 12px "Times New Roman", Times, serif;
+  }
+
+  .workflow-step strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  .workflow-arrow {
+    display: none;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .info-card {
+    border: 1px solid #ddd;
+    padding: 14px;
+    background: #fff;
+  }
+
+  .info-card span {
+    display: block;
+    color: #7b8494;
+    font: 11px "Times New Roman", Times, serif;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+
+  .info-card strong {
+    font: 13px "Times New Roman", Times, serif;
+  }
+
+  .project-note {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-left: 3px solid #777;
+    background: #fafafa;
+    color: #687184;
+    font: 12px/1.6 "Times New Roman", Times, serif;
+  }
+
+  .footer {
+    margin: 28px 0 12px;
+    text-align: center;
+    color: #8a92a0;
+    font: 11px "Times New Roman", Times, serif;
+  }
+
+  @media (max-width: 800px) {
+    .workflow,
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="desk">
+
+  <header class="masthead">
+    <div class="masthead-title">
+      <span class="masthead-name">Stop&nbsp;Press</span>
+      <span class="masthead-sub">AI-powered fake news detection desk</span>
+    </div>
+
+    <div class="masthead-clock" id="clock" aria-hidden="true">00:00:00</div>
+  </header>
+
+  <div class="project-intro">
+    <strong>NEWS VERIFICATION SYSTEM</strong>
+    <p>
+      Submit a news headline, paragraph, or complete article for machine-learning
+      based classification and view the prediction with its signal breakdown.
+    </p>
+  </div>
+
+  <div class="board">
+
+    <section class="panel intake-panel">
+      <h2 class="panel-title">1. Incoming Copy</h2>
+
+      <textarea id="newsText" rows="14"
+      placeholder="Paste the copy to be checked — a headline, a paragraph, a full article. You can also paste a screenshot directly (Ctrl+V)."
+      aria-label="News text to verify">
+</textarea>
+      <div class="upload-row">
+        <label for="imageUpload" class="upload-btn">Upload screenshot</label>
+         <input type="file" id="imageUpload" accept="image/*" hidden>
+       <span id="uploadStatus" class="upload-status"></span>
+      </div>
+
+      <div class="input-meta">
+        <span id="wordCount">Words: 0</span>
+        <span>Input: News Article</span>
+      </div>
+
+      <button id="checkBtn" type="button">Run verification</button>
+
+      <div class="log-lines" id="logLines"></div>
+    </section>
+
+    <section class="panel results-panel">
+      <h2 class="panel-title">2. Verification Result</h2>
+
+      <div class="empty-state" id="emptyState">
+        <p>
+          Nothing on the wire yet. Paste copy on the left and run verification
+          to see the prediction and analysis breakdown here.
+        </p>
+      </div>
+
+      <div class="results hidden" id="results">
+        <div class="feedback">
+         <span class="feedback-q">Was this verdict correct?</span>
+      <button type="button" id="fbCorrect">Yes</button>
+      <button type="button" id="fbWrong">No</button>
+      <span id="fbStatus" class="feedback-status"></span>
+      </div>
+
+        <div class="stamp-row">
+          <div class="stamp" id="stamp">
+            <span id="stampText">CLEARED</span>
+          </div>
+        </div>
+
+        <div class="chart-block">
+          <div class="chart-header">
+            <span class="chart-label">Signal breakdown</span>
+          </div>
+
+          <div class="chart-bar">
+            <div class="chart-fill real" id="fillReal"></div>
+            <div class="chart-fill fake" id="fillFake"></div>
+          </div>
+
+          <div class="chart-legend">
+            <span class="legend-item">
+              <i class="dot real"></i>Real <b id="pctReal">—</b>
+            </span>
+            <span class="legend-item">
+              <i class="dot fake"></i>Fake <b id="pctFake">—</b>
+            </span>
+          </div>
+        </div>
+
+        <div class="reasons-block">
+          <div class="reasons-col">
+            <h3>Leans real because it contains</h3>
+            <ul id="reasonsReal"></ul>
+          </div>
+
+          <div class="reasons-col">
+            <h3>Leans fake because it contains</h3>
+            <ul id="reasonsFake"></ul>
+          </div>
+        </div>
+
+        <p class="disclaimer">
+          These are word patterns statistically correlated with each label in
+          the training data — not a fact-check, and not proof either way.
+        </p>
+
+      </div>
+    </section>
+
+  </div>
+
+  <section class="panel section-panel">
+    <h2 class="panel-title">3. Detection Pipeline</h2>
+
+    <div class="workflow">
+      <div class="workflow-step">
+        <strong>01</strong>
+        News Input
+      </div>
+
+      <div class="workflow-step">
+        <strong>02</strong>
+        Text Preprocessing
+      </div>
+
+      <div class="workflow-step">
+        <strong>03</strong>
+        Feature Extraction
+      </div>
+
+      <div class="workflow-step">
+        <strong>04</strong>
+        ML Classification
+      </div>
+
+      <div class="workflow-step">
+        <strong>05</strong>
+        Prediction
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    STOP PRESS · NEWS VERIFICATION SYSTEM · ACADEMIC PROJECT
+  </div>
+
+</div>
+
+<script>
+  
+  const newsText = document.getElementById("newsText");
+  const wordCount = document.getElementById("wordCount");
+
+  function updateWordCount() {
+    const text = newsText.value.trim();
+    const count = text ? text.split(/\s+/).length : 0;
+    wordCount.textContent = "Words: " + count;
+  }
+
+  newsText.addEventListener("input", updateWordCount);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
